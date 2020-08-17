@@ -126,36 +126,36 @@ public class MstToTspAlgorithm {
 		}
 	}
 	/**
-     * Class used to store TSP information
-     */
-    private static class TSPObject implements Comparable<TSPObject>{
-    	String order;
-    	double length;
-    	
-    	TSPObject(String order,double length){ 
-    		this.order = order;
-    		this.length = length;
-    	}
-    	public String getOrder() {
+	 * Class used to store TSP information
+	 */
+	private static class TSPObject implements Comparable<TSPObject>{
+		String order;
+		double length;
+
+		TSPObject(String order,double length){ 
+			this.order = order;
+			this.length = length;
+		}
+		public String getOrder() {
 			return order;
-    	}
-    	public void setOrder(String order) {
-    		this.order = order;
-    	}
-    	public Double getLength() {
+		}
+		public void setOrder(String order) {
+			this.order = order;
+		}
+		public Double getLength() {
 			return length;
-    	}
-    	public void setLength(double length) {
-    		this.length = length;
-    	}
-    	public String toString() {
-    		return "order: "+order+" length: "+Double.toString(length);
-    	}
-    	/**
-    	 * Override of the compareTo method, used to sort tsp routes by length 
-         * @param TSPObject tspobj to compare
-         * 
-    	 */
+		}
+		public void setLength(double length) {
+			this.length = length;
+		}
+		public String toString() {
+			return "order: "+order+" length: "+Double.toString(length);
+		}
+		/**
+		 * Override of the compareTo method, used to sort tsp routes by length 
+		 * @param TSPObject tspobj to compare
+		 * 
+		 */
 		@Override
 		public int compareTo(TSPObject tspobj) {
 			int value = 0;
@@ -171,49 +171,49 @@ public class MstToTspAlgorithm {
 			}
 			return value;
 		}
-    }
+	}
 	public static void main(String[] args) throws IOException{
 		//Default filepaths
 		String inputFile = "distanceMatrix.txt";
 		String outputFile = "result.txt";
-		
+
 		//randomized: 0 basic version, 1 randomized tree creation
 		int randomized = 1;
 		int repeats = 100;
-		
+
 		//If given filepaths as parameter then uses those
 		try {
 			inputFile = args[0];
 			randomized = Integer.parseInt(args[1]);
 		}
 		catch(ArrayIndexOutOfBoundsException e){
-    		System.out.println("Not all possible parameters given");
-    	}
+			System.out.println("Not all possible parameters given");
+		}
 		ArrayList<ArrayList<Double>> distanceMatrix = new ArrayList<ArrayList<Double>>();
 		distanceMatrix = readFile(inputFile);
-		
+
 		if(randomized == 0) {
 			//create complete graph
 			Pair<ArrayList<Node>, ArrayList<Edge>> vals = createGraph(distanceMatrix);
 			ArrayList<Node> nodes = vals.getFirstValue();
 			//ArrayList<Edge> alledges = vals.getEdgelist();
-			
+
 			//create minimum spanning tree
 			ArrayList<Node> mst = prim(nodes);
-			
+
 			//create tsp route
 			ArrayList<Node> tsp = mstToTsp(mst);//, alledges, mstedges);
 			Pair<String, Double> tspVals = calculateRouteLength(tsp);
 			System.out.println("Order: " + tspVals.getFirstValue());
 			System.out.println("Length: " + tspVals.getSecondValue());
-			
+
 			//write result to txt file
 			writeTspResultToFile(tspVals.getSecondValue(), tspVals.getFirstValue(), outputFile);
 		}
 		if(randomized !=0) {
 			//randomized version
 			ArrayList<TSPObject> list = new ArrayList<TSPObject>();
-			
+
 			//create graph
 			Pair<ArrayList<Node>, ArrayList<Edge>>vals2 = createGraph(distanceMatrix);
 			ArrayList<Node>nodes2 = vals2.getFirstValue();
@@ -222,7 +222,7 @@ public class MstToTspAlgorithm {
 			for (int i = 0; i < repeats; i++) {
 				//create spanning tree
 				ArrayList<Node> st = randomPrim(nodes2);
-				
+
 				//create tsp route
 				ArrayList<Node> tsp2 = mstToTsp(st);//, alledges2, stedges);
 				Pair<String, Double> tsp2Vals = calculateRouteLength(tsp2);
@@ -232,7 +232,7 @@ public class MstToTspAlgorithm {
 			}
 			Collections.sort(list);
 			//System.out.println(list);
-			
+
 			TSPObject first = list.get(0);
 			System.out.println("Random ver Order: " + first.getOrder());
 			System.out.println("Random ver Length: " + first.getLength());
@@ -254,7 +254,7 @@ public class MstToTspAlgorithm {
 		int startNode = 0;
 		int nextNode = 0;
 		int previousNode = 0;
-		
+
 		//calculates node degree for each node (how many edges are connected for each node)
 		for (int i = 0; i < tsp.size(); i++) {
 			int numofedges = 0;
@@ -343,7 +343,7 @@ public class MstToTspAlgorithm {
 					}
 				}
 				maxLength = 0.0;
-				
+
 				// set removed edge to not visited for current node
 				mst.get(i).edges.get(edgeToRemove).visited = false;
 
@@ -352,7 +352,7 @@ public class MstToTspAlgorithm {
 
 				// Choose the node that was on the other end of the deleted edge
 				int otherSide = mst.get(i).edges.get(edgeToRemove).to;
-				
+
 				// Go through all the edges for that node
 				for (int j = 0; j < mst.get(otherSide).edges.size(); j++) {
 					// remove the same edge for that node too
@@ -477,7 +477,7 @@ public class MstToTspAlgorithm {
 				}
 			}
 			nodes.get(edgeToAdd.from).edges.get(edgeIndex).visited = true;
-			
+
 			mstEdges.add(edgeToAdd);
 
 			mst.add(nodes.get(edgeToAdd.to));
@@ -494,7 +494,7 @@ public class MstToTspAlgorithm {
 	 * @return values pair that contains nodes and edges that belong to spanningtree
 	 */
 	private static ArrayList<Node> randomPrim(ArrayList<Node> nodes){
-		
+
 		//set every node to not chosen and every edge also to not visited
 		for(int j = 0; j < nodes.size(); j++) {
 			nodes.get(j).chosen = false;
@@ -512,9 +512,9 @@ public class MstToTspAlgorithm {
 		int startNode = (int) (Math.random() * nodes.size());
 		nodes.get(startNode).chosen = true;
 		st.add(nodes.get(startNode));
-		
+
 		Edge edgeToAdd = null;
-		
+
 		//while not every node is connected to the tree
 		while (st.size() < nodes.size()) {
 			//go through every node that belongs to the tree
@@ -583,20 +583,20 @@ public class MstToTspAlgorithm {
 	private static ArrayList<ArrayList<Double>> readFile(String inputFile) throws IOException {
 		FileReader in = new FileReader(inputFile);
 		LineNumberReader lineNumberReader = new LineNumberReader(new BufferedReader(in));
-		
+
 		ArrayList<ArrayList<Double>> matrix = new ArrayList<ArrayList<Double>>();
-		
+
 		String currentLine;
 		while((currentLine = lineNumberReader.readLine()) != null) {
-        	if(currentLine.contains("EOF")) {
-        		break;
-        	}
-        	String[] nodes = currentLine.split(",");
-        	ArrayList<Double> row = new ArrayList<Double>();
-        	for(int i = 0; i < nodes.length;i++) {
-        		row.add(Double.parseDouble(nodes[i]));
-        	}
-        	matrix.add(row);
+			if(currentLine.contains("EOF")) {
+				break;
+			}
+			String[] nodes = currentLine.split(",");
+			ArrayList<Double> row = new ArrayList<Double>();
+			for(int i = 0; i < nodes.length;i++) {
+				row.add(Double.parseDouble(nodes[i]));
+			}
+			matrix.add(row);
 		}
 		lineNumberReader.close();
 		return matrix;
